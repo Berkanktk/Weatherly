@@ -10,6 +10,7 @@
     let selectedResult: App.Result | null = null; 
     let isFinished: boolean = false;
     $: isFinished = $searchSuccess;
+    let loading: boolean = false;
 
     let userSelection: {
         city: string,
@@ -26,6 +27,8 @@
             clearTimeout(timer);
         }
 
+        loading = true;
+
         // Set a new timer to wait for 2 seconds after the user stops typing
         timer = setTimeout(async () => {
             if (city.length > 0) {
@@ -36,6 +39,7 @@
                     const data = await response.json();
                     search = data;
                     found = true;
+                    loading = false;
                 } catch (error) {
                     console.error(error);
                 }
@@ -70,15 +74,21 @@
 
 {#if !isFinished}
 <h1 class="text-5xl mt-4 font-bold absolute p-4">Weatherly</h1>
-    <div class="flex flex-col justify-center h-screen w-1/4 mx-auto">
+    <div class="flex flex-col h-screen w-1/4 mx-auto mt-56">
         <h1 class="text-3xl font-bold mb-4">Enter City</h1>
         <input
             type="text"
             bind:value={city}
             placeholder="Copenhagen..."
-            class="border border-gray-300 rounded-md p-2 w-full"
+            class="border border-gray-300 rounded-xl p-4 w-full"
             on:input={fetchSearchData}
         />
+        {#if loading}
+            <div class="flex items-center justify-center mt-4">
+                <span class="loading loading-spinner loading-lg"></span>
+                <p class="ml-4">Fetching</p>
+            </div>
+        {/if}
 
         {#if found && search !== null}
             <div class="mt-4">
@@ -112,4 +122,3 @@
 {:else}
     <Weather selected={userSelection} />
 {/if}
-
