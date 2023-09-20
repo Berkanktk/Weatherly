@@ -1,10 +1,13 @@
 <script lang="ts">
     import Geolookup from '$lib/components/Geolookup.svelte';
     import { onMount } from "svelte";
+    import { isRainy } from './stores';
 
     let increment = 0;
     let drops: App.Raindrop[] = [];
     const maxIncrement = 100;
+    let activateRainEffec: boolean = false;
+    $: activateRainEffect = $isRainy;
 
     onMount(() => {
         makeItRain();
@@ -29,6 +32,8 @@
 </script>
 
 <body class="back-row-toggle splat-toggle">
+
+    {#if activateRainEffect}
     <div class="back-row-toggle splat-toggle">
         {#each drops as drop}
             <div class="drop"style="left: {drop.left}; bottom: {drop.bottom}; animation-delay: {drop.animationDelay}; animation-duration: {drop.animationDuration};">
@@ -37,6 +42,7 @@
             </div>
         {/each}
     </div>
+    {/if}
 
     <Geolookup />
 </body>

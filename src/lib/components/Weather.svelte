@@ -2,6 +2,8 @@
     import { countryCode } from 'emoji-flags';
     import mockData from '$lib/mockData.json';
     import codeData from '$lib/codeData.json';
+    import { onMount } from 'svelte';
+    import { isRainy } from '../../routes/stores';
 
     export let selected: {
         city: string,
@@ -25,7 +27,6 @@
     });
 
     // Fetch the JSON data from the API
-
     async function fetchData(data: any) {
         fetch(`https://api.open-meteo.com/v1/forecast?latitude=${data.coordinates.latitude}&longitude=${data.coordinates.longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_sum,windspeed_10m_max,windgusts_10m_max&current_weather=true&timezone=Europe%2FBerlin`)
           .then(response => response.json())
@@ -71,7 +72,15 @@
         // Return a default icon if code is not found
         return 'error.png';
     }
-    </script>
+
+    onMount(() => {
+        if (weatherData && weatherData?.current_weather.weathercode >= 51) {
+            isRainy.set(true);
+        } else {
+            isRainy.set(false);
+        }
+    });
+</script>
     
 <!-- ########################### HTML ########################### -->
     
@@ -144,8 +153,8 @@
         </div>
     {:else}
         <div class="flex items-center justify-center h-screen">
-        <span class="loading loading-spinner loading-lg"></span>
-        <p class="ml-4">Loading</p>
+            <span class="loading loading-spinner loading-lg"></span>
+            <p class="ml-4">Loading</p>
         </div>
     {/if}
 </div>
