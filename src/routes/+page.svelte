@@ -1,112 +1,151 @@
 <script lang="ts">
-import { countryCode } from 'emoji-flags';
-import mockData from '$lib/mockData.json';
+    import Geolookup from '$lib/components/Geolookup.svelte';
+    import { onMount } from "svelte";
 
-  let singleCountryData: any | null = null;
-  let weatherData: App.WeatherData | null = null;
+    let increment = 0;
+    let drops: App.Raindrop[] = [];
+    const maxIncrement = 100;
 
-  // // Fetch the JSON data from the API
-  // fetch('https://api.open-meteo.com/v1/forecast?latitude=55.3785&longitude=10.4036&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_sum,windspeed_10m_max,windgusts_10m_max&current_weather=true&timezone=Europe%2FBerlin')
-  //   .then(response => response.json())
-  //   .then((data: WeatherData) => {
-  //     weatherData = data;
-  //   });
+    onMount(() => {
+        makeItRain();
+    });
 
-  // Mock data
-  weatherData = mockData;
+    const makeItRain = () => {
+        while (increment < maxIncrement) {
+            const randoHundo = Math.floor(Math.random() * (98 - 1 + 1) + 1);
+            const randoFiver = Math.floor(Math.random() * (5 - 2 + 1) + 2);
+            increment += randoFiver;
 
-    // Helper function to convert date to weekday
-  function dateToWeekday(dateString: string): string {
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',];
-    const date = new Date(dateString);
-    return days[date.getDay()];
-  }
+            const raindrop: App.Raindrop = {
+                left: increment + "%",
+                bottom: randoFiver * 2 + 99 + "%",
+                animationDelay: "0." + randoHundo + "s",
+                animationDuration: "0.75" + randoHundo + "s",
+            };
 
-  function roundUp(num: number): number {
-    return Math.round(num);
-  }
-
-  function extractTime(dateTimeString: string): string {
-    return dateTimeString.split('T')[1];
-  }
-
-  function countryLookup(short: string): string {
-    singleCountryData = countryCode(short);
-    return singleCountryData.emoji;
-  }
+            drops = [...drops, raindrop];
+        }
+    };
 </script>
 
-<!-- ########################### HTML ########################### -->
+<body class="back-row-toggle splat-toggle">
+    <div class="back-row-toggle splat-toggle">
+        {#each drops as drop}
+            <div class="drop"style="left: {drop.left}; bottom: {drop.bottom}; animation-delay: {drop.animationDelay}; animation-duration: {drop.animationDuration};">
+                <div class="stem" style="animation-delay: {drop.animationDelay}; animation-duration: {drop.animationDuration};"/>
+                <div class="splat" style="animation-delay: {drop.animationDelay}; animation-duration: {drop.animationDuration};" />
+            </div>
+        {/each}
+    </div>
 
-<!-- Location info -->
-{#if weatherData}
-<div class="text-center">
-  <h1 class="text-5xl mt-4 font-bold">Odense, DK {countryLookup('DK')}</h1>
-  <div class="mt-1 text-gray-500">
-    <span class="text-center fill-white mr-2"><img src={`/weather-icons/sunrise.svg`} alt="Sunrise" class="inline mr-2"/>{extractTime(weatherData?.daily.sunrise[0])}</span>
-    <span>|</span>
-    <span class="text-center fill-white ml-2"><img src={`/weather-icons/sunset.svg`} alt="Sunset" class="inline mr-2"/>{extractTime(weatherData?.daily.sunset[0])}</span>
-  </div>
-  <!-- <p class="text-sm text-gray-400">{weatherData.current_weather.is_day ? 'Day' : 'Night'}</p> -->
-</div>
+    <Geolookup />
+</body>
 
-<!-- Display current weather
-<div>
-  <h1>Current Weather</h1>
-  <p>Temperature: {roundUp(weatherData.current_weather.temperature)}°C</p>
-  <p>Windspeed: {roundUp(weatherData.current_weather.windspeed)} km/h</p>
-</div> -->
 
-<!-- Display current weather -->
-<div class="flex justify-center my-20 items-center">
-  <div class="border-2 border-gray-800 rounded-lg p-4 text-center mr-16 hover:scale-105 transition-transform duration-300 ease-in-out">
-    <h1 class="text-lg font-medium mb-4"><img src={`/weather-icons/wind.svg`} alt="" class="inline mr-1">Wind Information</h1>
-    <span class="text-4xl font-bold text-red-600">{roundUp(weatherData.current_weather.windspeed)} km/h</span>
-    <p class="text-sm text-gray-400">Wind gusts: {roundUp(weatherData.daily.windgusts_10m_max[0])} km/h</p>
-  </div>
+<style>
+    body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: linear-gradient(to bottom, #202020, #111119);
+    }
 
-  <!-- <div class="bg-gray-700 rounded-lg p-4 text-center">
-    <h1 class="text-lg font-medium mb-4">Precipitation</h1>
-    <span class="text-4xl font-bold">{roundUp(weatherData.daily.precipitation_sum[0])} mm</span>
-    <p class="text-sm text-gray-400">Rain</p>
-  </div> -->
+    .drop {
+        position: absolute;
+        bottom: 100%;
+        width: 15px;
+        height: 120px;
+        pointer-events: none;
+        animation: drop 0.5s linear infinite;
+    }
 
-  <div class="bg-gray-700 rounded-lg p-4 text-center hover:scale-105 transition-transform duration-300 ease-in-out">
-    <h1 class="text-3xl font-medium">Current Weather</h1>
-    <p class="text-sm text-gray-400 flex items-center justify-center"><img src={`/weather-icons/droplet.svg`} alt="droplet" class="inline mr-1">{weatherData.daily.precipitation_sum[0]} mm precipitation</p>
-    <img src={`/weather-icons/rainy.svg`} alt="" width="120px" class="m-6 inline">
-    <span class="block text-2xl font-extrabold">{roundUp(weatherData.current_weather.temperature)}°C</span>
-    <span class="text-sm text-gray-400"><img src={`/weather-icons/thermometer.svg`} alt="termometer" width="14px" class="inline">{roundUp(weatherData.daily.temperature_2m_min[0])}°C | {roundUp(weatherData.daily.temperature_2m_max[0])}°C</span>
-    <p class="mt-3 italic">Mainly clear, partly cloudy, and overcast</p>
-  </div>
+    @keyframes drop {
+        0% {
+            transform: translateY(0vh);
+        }
 
-  <div class="border-2 border-gray-800 rounded-lg p-4 text-center ml-16 hover:scale-105 transition-transform duration-300 ease-in-out">
-    <h1 class="text-lg font-medium mb-4">Highest UV-Index</h1>
-    <span class="text-4xl font-bold text-green-600">{roundUp(weatherData.daily.uv_index_max[0])}</span>
-    <p class="text-sm text-gray-400">Moderate</p>
-  </div>
-</div>
+        75% {
+            transform: translateY(90vh);
+        }
 
-<!-- Display daily forecast -->
-<div>
-  <div class="flex justify-center">
-    {#each weatherData.daily.time as day, index}
-      {#if index !== 0}
-        <div class="m-4 hover:scale-105 transition-transform duration-300 ease-in-out">
-          <p class="text-center text-2xl mb-4"><strong>{dateToWeekday(day)}</strong></p>
-          <div class="bg-gray-700 rounded-xl p-4"> <!-- border-2 border-gray-800 rounded-lg -->
-            <img src={`/weather-icons/heavy-snow.png`} alt="" width="80px" class="m-6">
-            <span class="block mb-1"><img src={`/weather-icons/wind.svg`} alt="" class="inline mr-1">{roundUp(weatherData.daily.windspeed_10m_max[index])} km/h</span>
-            <span class="right-0"><img src={`/weather-icons/thermometer.svg`} alt="" class="inline mr-1">{roundUp(weatherData.daily.temperature_2m_min[index])}°C | {roundUp(weatherData.daily.temperature_2m_max[index])}°C</span>
-          </div>
-        </div>
-      {/if}
-    {/each}
-  </div>
-</div>
-{:else}
-  <div class="flex items-center justify-center h-screen">
-    <span class="loading loading-spinner loading-lg"></span>
-    <p class="ml-4">Loading</p>
-  </div>
-{/if}
+        100% {
+            transform: translateY(90vh);
+        }
+    }
+
+    .stem {
+        width: 1px;
+        height: 60%;
+        margin-left: 7px;
+        background: linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0),
+            rgba(255, 255, 255, 0.25)
+        );
+        animation: stem 0.5s linear infinite;
+    }
+
+    @keyframes stem {
+        0% {
+            opacity: 1;
+        }
+
+        65% {
+            opacity: 1;
+        }
+
+        75% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 0;
+        }
+    }
+
+    .splat {
+        width: 15px;
+        height: 10px;
+        border-top: 2px dotted rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        opacity: 1;
+        transform: scale(0);
+        animation: splat 0.5s linear infinite;
+        display: none;
+    }
+
+    body.splat-toggle .splat {
+        display: block;
+    }
+
+    @keyframes splat {
+        0% {
+            opacity: 1;
+            transform: scale(0);
+        }
+
+        80% {
+            opacity: 1;
+            transform: scale(0);
+        }
+
+        90% {
+            opacity: 0.5;
+            transform: scale(1);
+        }
+
+        100% {
+            opacity: 0;
+            transform: scale(1.5);
+        }
+    }
+
+    .splat-toggle {
+        top: 20px;
+    }
+
+    .back-row-toggle {
+        top: 90px;
+        line-height: 12px;
+    }
+</style>
