@@ -26,11 +26,11 @@
     }
 
     // Mock data
-    // weatherData = mockData;
+    weatherData = mockData;
 
     // Helper function to convert date to weekday
     function dateToWeekday(dateString: string): string {
-        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',];
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         const date = new Date(dateString);
         return days[date.getDay()];
     }
@@ -50,7 +50,7 @@
 
     // Fetch the data when the component is mounted
     $: if (selected) {
-        fetchData(selected);
+        // fetchData(selected);
     }
     </script>
     
