@@ -16,6 +16,7 @@ declare global {
 		
 		  interface DailyForecast {
 			time: string[];
+			weathercode: number[];
 			temperature_2m_max: number[];
 			temperature_2m_min: number[];
 			windspeed_10m_max: number[];
