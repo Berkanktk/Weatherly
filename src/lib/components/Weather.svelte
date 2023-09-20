@@ -80,6 +80,10 @@
             isRainy.set(false);
         }
     });
+
+    function goBack() {
+        location.reload();
+    }
 </script>
     
 <!-- ########################### HTML ########################### -->
@@ -159,3 +163,6 @@
     {/if}
 </div>
 
+<div class="top-4 left-4 absolute">
+    <button on:click={goBack} class="bg-gray-600 text-white p-4 rounded-md hover:bg-gray-700 transition-colors duration-300 ease-in-out">Change</button>
+</div>
