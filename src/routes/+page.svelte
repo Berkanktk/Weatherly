@@ -3,45 +3,7 @@ import { countryCode } from 'emoji-flags';
 import mockData from '$lib/mockData.json';
 
   let singleCountryData: any | null = null;
-
-  function countryLookup(short: string): string {
-    singleCountryData = countryCode(short);
-    return singleCountryData.emoji;
-  }
-
-  interface CurrentWeather {
-    temperature: number;
-    windspeed: number;
-    weathercode: number;
-    is_day: number;
-    time: string;
-  }
-
-  interface DailyForecast {
-    time: string[];
-    temperature_2m_max: number[];
-    temperature_2m_min: number[];
-    windspeed_10m_max: number[];
-    windgusts_10m_max: number[];
-    sunrise: string[];
-    sunset: string[];
-    uv_index_max: number[];
-    precipitation_sum: number[];
-  }
-
-  interface WeatherData {
-    latitude: number;
-    longitude: number;
-    generationtime_ms: number;
-    utc_offset_seconds: number;
-    timezone: string;
-    timezone_abbreviation: string;
-    elevation: number;
-    current_weather: CurrentWeather;
-    daily: DailyForecast;
-  }
-
-  let weatherData: WeatherData | null = null;
+  let weatherData: App.WeatherData | null = null;
 
   // // Fetch the JSON data from the API
   // fetch('https://api.open-meteo.com/v1/forecast?latitude=55.3785&longitude=10.4036&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_sum,windspeed_10m_max,windgusts_10m_max&current_weather=true&timezone=Europe%2FBerlin')
@@ -66,6 +28,11 @@ import mockData from '$lib/mockData.json';
 
   function extractTime(dateTimeString: string): string {
     return dateTimeString.split('T')[1];
+  }
+
+  function countryLookup(short: string): string {
+    singleCountryData = countryCode(short);
+    return singleCountryData.emoji;
   }
 </script>
 
