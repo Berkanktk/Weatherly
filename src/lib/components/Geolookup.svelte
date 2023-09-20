@@ -90,7 +90,7 @@
                             on:click={() => handleResultClick(result)}
                             style="cursor: pointer;"
                         >
-                            <p class="text-lg font-bold">{result.name}</p>
+                            <p class="text-lg font-bold">{result.name}, {result.country_code}</p>
                             <p class="text-sm text-gray-500">Country: {result.country}</p>
                             <p class="text-sm text-gray-500">Coordinates: {result.latitude} {result.longitude}</p>
                         </button>
