@@ -1,6 +1,7 @@
 <script lang="ts">
     import { countryCode } from 'emoji-flags';
     import mockData from '$lib/mockData.json';
+    import codeData from '$lib/codeData.json';
 
     export let selected: {
         city: string,
@@ -14,6 +15,14 @@
     
     let singleCountryData: any | null = null;
     let weatherData: App.WeatherData | null = null;
+    let weatherCode = JSON.parse(JSON.stringify(codeData[0]));
+    const weatherCodeArray = Object.keys(weatherCode).map((code) => {
+        return {
+            code: parseInt(code),
+            description: weatherCode[code].description,
+            icon: weatherCode[code].icon,
+        };
+    });
 
     // Fetch the JSON data from the API
 
@@ -26,7 +35,7 @@
     }
 
     // Mock data
-    weatherData = mockData;
+    // weatherData = mockData;
 
     // Helper function to convert date to weekday
     function dateToWeekday(dateString: string): string {
@@ -50,14 +59,24 @@
 
     // Fetch the data when the component is mounted
     $: if (selected) {
-        // fetchData(selected);
+        fetchData(selected);
+    }
+
+     // Function to translate weathercode to icon
+     function translateWeathercode(code: number) {
+        const foundItem = weatherCodeArray.find((item) => item.code === code);
+        if (foundItem) {
+            return foundItem.icon;
+        }
+        // Return a default icon if code is not found
+        return 'error.png';
     }
     </script>
     
 <!-- ########################### HTML ########################### -->
     
 <!-- Location info -->
-<div class="h-screen	">
+<div class="h-screen mt-8">
     {#if weatherData}
         <div class="text-center">
             <h1 class="text-5xl mt-4 font-bold">{selected.city}, {selected.country} {countryLookup(selected.country_code)}</h1>
@@ -93,7 +112,7 @@
             <div class="bg-gray-700 rounded-lg p-4 text-center hover:scale-105 transition-transform duration-300 ease-in-out">
                 <h1 class="text-3xl font-medium">Today</h1>
                 <p class="text-sm text-gray-400 flex items-center justify-center"><img src={`/weather-icons/droplet.svg`} alt="droplet" class="inline mr-1">{weatherData.daily.precipitation_sum[0]} mm precipitation</p>
-                <img src={`/weather-icons/rainy.svg`} alt="" width="120px" class="m-6 inline">
+                <img src={`/weather-icons/${translateWeathercode(weatherData.current_weather.weathercode)}`} alt="" width="120px" class="m-6 inline">
                 <span class="block text-2xl font-extrabold">{roundUp(weatherData.current_weather.temperature)}°C</span>
                 <span class="text-sm text-gray-400"><img src={`/weather-icons/thermometer.svg`} alt="termometer" width="14px" class="inline">{roundUp(weatherData.daily.temperature_2m_min[0])}°C | {roundUp(weatherData.daily.temperature_2m_max[0])}°C</span>
                 <p class="mt-3 italic">Mainly clear, partly cloudy, and overcast</p>
@@ -114,7 +133,7 @@
                 <div class="m-4 hover:scale-105 transition-transform duration-300 ease-in-out">
                     <p class="text-center text-2xl mb-4"><strong>{dateToWeekday(day)}</strong></p>
                     <div class="bg-gray-700 rounded-xl p-4"> <!-- border-2 border-gray-800 rounded-lg -->
-                    <img src={`/weather-icons/heavy-snow.png`} alt="" width="80px" class="m-6">
+                    <img src={`/weather-icons/${translateWeathercode(weatherData.daily.weathercode[index])}`} alt="" width="80px" class="m-6">
                     <span class="block mb-1"><img src={`/weather-icons/wind.svg`} alt="" class="inline mr-1">{roundUp(weatherData.daily.windspeed_10m_max[index])} km/h</span>
                     <span class="right-0"><img src={`/weather-icons/thermometer.svg`} alt="" class="inline mr-1">{roundUp(weatherData.daily.temperature_2m_min[index])}°C | {roundUp(weatherData.daily.temperature_2m_max[index])}°C</span>
                     </div>
