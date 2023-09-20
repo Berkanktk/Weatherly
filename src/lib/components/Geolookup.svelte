@@ -35,7 +35,6 @@
                     );
                     const data = await response.json();
                     search = data;
-                    console.log(search);
                     found = true;
                 } catch (error) {
                     console.error(error);
@@ -70,15 +69,15 @@
 
 
 {#if !isFinished}
-<h1 class="text-5xl mt-4 font-bold absolute p-4">Weaterly</h1>
+<h1 class="text-5xl mt-4 font-bold absolute p-4">Weatherly</h1>
     <div class="flex flex-col justify-center h-screen w-1/4 mx-auto">
-        <h1 class="text-3xl font-bold mb-4">Enter City Name</h1>
+        <h1 class="text-3xl font-bold mb-4">Enter City</h1>
         <input
             type="text"
             bind:value={city}
             placeholder="Copenhagen..."
             class="border border-gray-300 rounded-md p-2 w-full"
-            on:input={getMockData}
+            on:input={fetchSearchData}
         />
 
         {#if found && search !== null}

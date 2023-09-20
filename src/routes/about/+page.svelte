@@ -15,7 +15,7 @@
             </tr>
         </thead>
         <tbody>
-            {#each Object.entries(codeData) as [code, info]}
+            {#each Object.entries(codeData[0]) as [code, info]}
                 <tr>
                     <td>{code}</td>
                     <td
