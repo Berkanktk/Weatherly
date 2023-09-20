@@ -9,7 +9,6 @@
 	"current_weather": {
 		"temperature": 16.5,
 		"windspeed": 34.6,
-		"winddirection": 227,
 		"weathercode": 51,
 		"is_day": 0,
 		"time": "2023-09-20T02:00"

@@ -1,5 +1,6 @@
 <script lang="ts">
 import { countryCode } from 'emoji-flags';
+import mockData from '$lib/mockData.json';
 
   let singleCountryData: any | null = null;
 
@@ -11,12 +12,9 @@ import { countryCode } from 'emoji-flags';
   interface CurrentWeather {
     temperature: number;
     windspeed: number;
-    sunrise: string[];
-    sunset: string[];
     weathercode: number;
     is_day: number;
     time: string;
-    winddirection: number;
   }
 
   interface DailyForecast {
@@ -32,6 +30,13 @@ import { countryCode } from 'emoji-flags';
   }
 
   interface WeatherData {
+    latitude: number;
+    longitude: number;
+    generationtime_ms: number;
+    utc_offset_seconds: number;
+    timezone: string;
+    timezone_abbreviation: string;
+    elevation: number;
     current_weather: CurrentWeather;
     daily: DailyForecast;
   }
@@ -46,71 +51,7 @@ import { countryCode } from 'emoji-flags';
   //   });
 
   // Mock data
-  weatherData = {
-    latitude: 55.37911,
-    longitude: 10.404785,
-    generationtime_ms: 1.849055290222168,
-    utc_offset_seconds: 7200,
-    timezone: "Europe/Berlin",
-    timezone_abbreviation: "CEST",
-    elevation: 19.0,
-    current_weather: {
-      temperature: 16.5,
-      windspeed: 34.6,
-      winddirection: 227,
-      weathercode: 51,
-      is_day: 0,
-      time: "2023-09-20T02:00",
-    },
-    daily_units: {
-      time: "iso8601",
-      weathercode: "wmo code",
-      temperature_2m_max: "°C",
-      temperature_2m_min: "°C",
-      sunrise: "iso8601",
-      sunset: "iso8601",
-      uv_index_max: "",
-      precipitation_sum: "mm",
-      windspeed_10m_max: "km/h",
-      windgusts_10m_max: "km/h",
-    },
-    daily: {
-      time: [
-        "2023-09-20",
-        "2023-09-21",
-        "2023-09-22",
-        "2023-09-23",
-        "2023-09-24",
-        "2023-09-25",
-        "2023-09-26",
-      ],
-      weathercode: [51, 51, 80, 2, 3, 3, 3],
-      temperature_2m_max: [19.2, 24.5, 19.0, 16.6, 16.6, 17.9, 19.7],
-      temperature_2m_min: [16.3, 16.6, 13.3, 11.9, 10.4, 11.9, 11.5],
-      sunrise: [
-        "2023-09-20T06:59",
-        "2023-09-21T07:01",
-        "2023-09-22T07:03",
-        "2023-09-23T07:05",
-        "2023-09-24T07:07",
-        "2023-09-25T07:09",
-        "2023-09-26T07:11",
-      ],
-      sunset: [
-        "2023-09-20T19:24",
-        "2023-09-21T19:21",
-        "2023-09-22T19:18",
-        "2023-09-23T19:16",
-        "2023-09-24T19:13",
-        "2023-09-25T19:11",
-        "2023-09-26T19:08",
-      ],
-      uv_index_max: [3.35, 2.95, 3.05, 3.3, 3.55, 3.05, 3.45],
-      precipitation_sum: [2.1, 0.6, 1.1, 0.3, 0.0, 0.0, 0.0],
-      windspeed_10m_max: [37.8, 24.8, 21.2, 18.9, 15.5, 20.0, 12.4],
-      windgusts_10m_max: [68.8, 45.0, 42.5, 43.2, 34.9, 37.1, 22.3],
-    },
-  };
+  weatherData = mockData;
 
     // Helper function to convert date to weekday
   function dateToWeekday(dateString: string): string {
