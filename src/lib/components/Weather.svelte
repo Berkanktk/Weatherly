@@ -80,20 +80,13 @@
         return 'error.png';
     }
 
-    onMount(() => {
-        if (weatherData && weatherData?.current_weather.weathercode >= 51) {
-            isRainy.set(true);
-        } else {
-            isRainy.set(false);
-        }
-    });
-
     function goBack() {
         location.reload();
     }
 
     $: {
         if (weatherData) {
+            console.log(weatherData.current_weather?.weathercode);
             windSpeed = roundUp(weatherData.current_weather?.windspeed);
 
             // Check if it's rainy based on wind speed or other criteria
@@ -127,6 +120,12 @@
             } else {
                 uvIndexColor = 'text-purple-600';
                 uvScale = 'Extreme';
+            }
+
+            if (weatherData && weatherData?.current_weather.weathercode >= 51) {
+            isRainy.set(true);
+            } else {
+                isRainy.set(false);
             }
         }
     }
