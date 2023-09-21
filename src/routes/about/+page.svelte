@@ -20,7 +20,7 @@
                     <td>{code}</td>
                     <td
                         ><img
-                            src={`/weather-icons/${info.icon}`}
+                            src={`${info.icon}`}
                             alt={info.description}
                             width="32"
                             height="32"
