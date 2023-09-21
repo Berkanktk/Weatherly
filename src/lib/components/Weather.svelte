@@ -15,6 +15,11 @@
         }
     }
     
+    let windTextColor = ''; 
+    let uvIndexColor = '';
+    let windSpeed = 0; 
+    let uvIndex = 0;
+    let uvScale = ''
     let singleCountryData: any | null = null;
     let weatherData: App.WeatherData | null = null;
     let weatherCode = JSON.parse(JSON.stringify(codeData[0]));
@@ -84,6 +89,46 @@
     function goBack() {
         location.reload();
     }
+
+    $: {
+        if (weatherData) {
+            windSpeed = roundUp(weatherData.current_weather?.windspeed);
+
+            // Check if it's rainy based on wind speed or other criteria
+            if (windSpeed < 10) {
+                windTextColor = 'text-blue-600';
+            } else if (windSpeed < 30) {
+                windTextColor = 'text-green-600';
+            } else if (windSpeed < 40) {
+                windTextColor = 'text-yellow-600';
+            } else if (windSpeed < 80) {
+                windTextColor = 'text-orange-600';
+            } else {
+                windTextColor = 'text-red-600';
+            }
+
+            uvIndex = roundUp(weatherData.daily.uv_index_max[0]);
+
+            // Check if it's rainy based on wind speed or other criteria
+            if (uvIndex <= 2) {
+                uvIndexColor = 'text-green-600';
+                uvScale = 'Low';
+            } else if (uvIndex <= 5) {
+                uvIndexColor = 'text-yellow-600';
+                uvScale = 'Moderate';
+            } else if (uvIndex <= 7) {
+                uvIndexColor = 'text-orange-600';
+                uvScale = 'High';
+            } else if (uvIndex <= 10) {
+                uvIndexColor = 'text-red-600';
+                uvScale = 'Very High';
+            } else {
+                uvIndexColor = 'text-purple-600';
+                uvScale = 'Extreme';
+            }
+        }
+    }
+    
 </script>
     
 <!-- ########################### HTML ########################### -->
@@ -101,25 +146,18 @@
             <!-- <p class="text-sm text-gray-400">{weatherData.current_weather.is_day ? 'Day' : 'Night'}</p> -->
         </div>
 
-        <!-- Display current weather
-        <div>
-            <h1>Current Weather</h1>
-            <p>Temperature: {roundUp(weatherData.current_weather.temperature)}°C</p>
-            <p>Windspeed: {roundUp(weatherData.current_weather.windspeed)} km/h</p>
-        </div> -->
-
         <!-- Display current weather -->
         <div class="flex justify-center my-20 items-center">
             <div class="border-2 border-gray-800 rounded-lg p-4 text-center mr-16 hover:scale-105 transition-transform duration-300 ease-in-out">
                 <h1 class="text-lg font-medium mb-4"><img src={`/weather-icons/wind.svg`} alt="" class="inline mr-1">Wind Information</h1>
-                <span class="text-4xl font-bold text-red-600">{roundUp(weatherData.current_weather.windspeed)} km/h</span>
+                <span class="text-4xl font-bold {windTextColor}">{roundUp(weatherData.current_weather.windspeed)} km/h</span>
                 <p class="text-sm text-gray-400">Wind gusts: {roundUp(weatherData.daily.windgusts_10m_max[0])} km/h</p>
             </div>
 
             <!-- <div class="bg-gray-700 rounded-lg p-4 text-center">
-            <h1 class="text-lg font-medium mb-4">Precipitation</h1>
-            <span class="text-4xl font-bold">{roundUp(weatherData.daily.precipitation_sum[0])} mm</span>
-            <p class="text-sm text-gray-400">Rain</p>
+                <h1 class="text-lg font-medium mb-4">Precipitation</h1>
+                <span class="text-4xl font-bold">{roundUp(weatherData.daily.precipitation_sum[0])} mm</span>
+                <p class="text-sm text-gray-400">Rain</p>
             </div> -->
 
             <div class="bg-gray-700 rounded-lg p-4 text-center hover:scale-105 transition-transform duration-300 ease-in-out">
@@ -133,8 +171,8 @@
 
             <div class="border-2 border-gray-800 rounded-lg p-4 text-center ml-16 hover:scale-105 transition-transform duration-300 ease-in-out">
                 <h1 class="text-lg font-medium mb-4">Highest UV-Index</h1>
-                <span class="text-4xl font-bold text-green-600">{roundUp(weatherData.daily.uv_index_max[0])}</span>
-                <p class="text-sm text-gray-400">Moderate</p>
+                <span class="text-4xl font-bold {uvIndexColor}">{roundUp(weatherData.daily.uv_index_max[0])}</span>
+                <p class="text-sm text-gray-400">{uvScale}</p>
             </div>
         </div>
 
